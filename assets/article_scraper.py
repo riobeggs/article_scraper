@@ -19,15 +19,14 @@ class Article:
 
         # Scrape article text
         article = self._html.find_all(class_="article__body ZSXJFNSWTapB article__content")
-        for article_content in article:
-            self._content = article_content.find_all("p")
+        self._content = article[0].find_all("p")
         for line in self._content:
             line = str(line)
             text = re.sub(re.compile('<.*?>'), "", line)
             text = text.replace("\n", " ")
             self._article_text.append(text)
         return self._article_text
-
+    
     @property
     def article_text(self):
         return " ".join(self._article_text)
