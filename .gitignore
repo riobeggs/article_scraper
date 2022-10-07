@@ -5,3 +5,5 @@ __init__.py
 .DS_Store
 assets/fonts/times new roman.ttf
 articles/
+fonts/
+images/
