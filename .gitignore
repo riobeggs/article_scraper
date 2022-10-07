@@ -3,3 +3,4 @@ __init__.py
 .venv/
 .DS_Store/
 .DS_Store
+assets/fonts/times new roman.ttf
