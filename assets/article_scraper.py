@@ -1,3 +1,4 @@
+from assets.image_downloader import download_image
 import assets.webdriver as Driver
 from bs4 import BeautifulSoup
 import re
@@ -7,15 +8,17 @@ class Article:
     _driver = None
     _html = None
     _article_text = None
-    _article_name = None
+    _article_title = None
     _text_list = None
+    _article_image = None
 
     def __init__(self, driver=Driver.run_web_driver()):
         self._driver = driver
         self._html = BeautifulSoup(self._driver.page_source, "html.parser")
         self._article_text = None
-        self._article_name = None
+        self._article_title = None
         self._text_list = []
+        self._article_image = None
 
     def scrape_title(self) -> str:
         """
@@ -26,9 +29,9 @@ class Article:
         find_heading = self._html.find(class_="article__heading")
         for heading in find_heading:
             heading = str(heading)
-            self._article_name = re.sub(re.compile("<.*?>"), "", heading)
-            self._article_name = self._article_name.capitalize()
-        return self._article_name
+            self._article_title = re.sub(re.compile("<.*?>"), "", heading)
+            self._article_title = self._article_title.capitalize()
+        return self._article_title
 
     def scrape_text(self) -> str:
         """
@@ -48,10 +51,23 @@ class Article:
         self._article_text = self._article_text.replace(subscription_text, "").strip()
         return self._article_text
 
+    def scrape_image(self) -> str | None:
+        images = self._html.find_all("img")
+        for image in images:
+            if "www.nzherald.co.nz" in image:
+                if "1440x810" in image:
+                    self._article_image = download_image(self._article_title, image["src"])
+                    return self._article_image
+
+
+    @property
+    def article_title(self):
+        return self._article_title
+
     @property
     def article_text(self):
         return self._article_text
 
     @property
-    def article_name(self):
-        return self._article_name
+    def article_image(self):
+        return self._article_image
