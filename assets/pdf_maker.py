@@ -2,7 +2,7 @@ import re
 from fpdf import FPDF
 
 
-def make_pdf(article_title: str, article_text: str):
+def make_pdf(article_title: str, article_text: str, article_image: str|None) -> str:
     """
     Creates a pdf file containing the chosen article.
 
@@ -11,22 +11,30 @@ def make_pdf(article_title: str, article_text: str):
 
     pdf = FPDF()
     pdf.add_font("TNR", "", r"assets/fonts/times new roman.ttf")
+    pdf.add_font("TNRB", "", f"assets/fonts/times new roman bold.ttf")
     pdf.set_margins(30,23,30)
     pdf.add_page()
 
     # create title
-    pdf.set_font("TNR", size=28)
-    pdf.multi_cell(150, 14, txt=article_title, align="L")
+    pdf.set_font("TNRB", size=28)
+    pdf.multi_cell(150, 12, txt=article_title, align="L")
 
-    # insert line break
-    pdf.cell(150, 7, ln=2)
+    if isinstance(article_image, str):
+        # insert image
+        pdf.cell(150, 5, ln=2)
+        pdf.set_y(pdf.get_y())
+        pdf.image(article_image, w=(pdf.w - 60))
+        pdf.cell(150, 5, ln=2)
+    else:
+        # insert line break
+        pdf.cell(150, 7, ln=2)
 
     # create text
     pdf.set_font("TNR", size=12)
     pdf.set_y(pdf.get_y())
     pdf.multi_cell(150, 8, txt=article_text, align="L")
 
-    article_title = re.sub(r"[^a-zA-Z0-9]", "|", article_title)
+    article_title = re.sub(r"[^a-zA-Z0-9]", "", article_title)
     article_title = article_title.replace(" ", "")
 
     # save the pdf as article_title.pdf
