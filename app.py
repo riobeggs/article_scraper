@@ -5,9 +5,10 @@ from assets.open_article import read_article
 
 def main():
     ar = Article()
-    ar.scrape_text()
     ar.scrape_title()
-    article_pdf = make_pdf(ar.article_name, ar.article_text)
+    ar.scrape_text()
+    ar.scrape_image()
+    article_pdf = make_pdf(ar.article_title, ar.article_text, ar.article_image)
     read_article(article_pdf)
 
 if __name__ == "__main__":
