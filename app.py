@@ -4,6 +4,7 @@ from assets.open_article import read_article
 
 
 def main():
+    # TODO Refactor all code
     ar = Article()
     ar.scrape_title()
     ar.scrape_text()
