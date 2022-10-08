@@ -2,7 +2,7 @@ import re
 from fpdf import FPDF
 
 
-def make_pdf(article_title: str, article_text: str, article_image: str|None) -> str:
+def make_pdf(article_title: str, article_text: str, article_image: str | None) -> str:
     """
     Creates a pdf file containing the chosen article.
 
@@ -12,7 +12,7 @@ def make_pdf(article_title: str, article_text: str, article_image: str|None) -> 
     pdf = FPDF()
     pdf.add_font("TNR", "", r"assets/fonts/times new roman.ttf")
     pdf.add_font("TNRB", "", f"assets/fonts/times new roman bold.ttf")
-    pdf.set_margins(30,23,30)
+    pdf.set_margins(30, 23, 30)
     pdf.add_page()
 
     # create title
@@ -30,6 +30,7 @@ def make_pdf(article_title: str, article_text: str, article_image: str|None) -> 
         pdf.cell(150, 7, ln=2)
 
     # create text
+    # TODO change to aa font that supports macrons
     pdf.set_font("TNR", size=12)
     pdf.set_y(pdf.get_y())
     pdf.multi_cell(150, 8, txt=article_text, align="L")
