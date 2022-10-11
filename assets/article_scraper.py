@@ -1,20 +1,23 @@
 from assets.image_downloader import download_image
-import assets.webdriver as Driver
 from bs4 import BeautifulSoup
+import wget
 import re
 
 
 class Article:
-    _driver = None
     _html = None
     _article_text = None
     _article_title = None
     _text_list = None
     _article_image = None
 
-    def __init__(self, driver=Driver.run_web_driver()):
-        self._driver = driver
-        self._html = BeautifulSoup(self._driver.page_source, "lxml")
+    def __init__(self):
+
+        url = input("Enter URL: ")
+        file = wget.download(url, "./assets/html/article.html")
+        file = open("./assets/html/article.html")
+
+        self._html = BeautifulSoup(file, "lxml")
         self._article_text = None
         self._article_title = None
         self._text_list = []
@@ -53,29 +56,40 @@ class Article:
 
     def scrape_image(self) -> str | None:
         images = self._html.find_all("img")
+
         for image in images:
             image = str(image)
-            if "1440" in image:
-                images = image.split(",")
-                for image_url in images:
-                    if "1440" in image_url:
-                        image_url = list(image_url)
-                        while image_url[-1] != "g":
-                            image_url = image_url[:-1]
-                        image_url = "".join(image_url)
-                        image_url = image_url.split(" ", 1)
-                        image_url = image_url[0]
-                        self._article_image = download_image(self._article_title, image_url)
-                        return self._article_image    
-        
+            if "1440" not in image:
+                continue
+
+            header_images = image.split(",")
+
+            for image_url in header_images:
+                if "1440x" not in image_url:
+                    continue
+                image_pattern = re.compile(r"^.*?\.jpg")
+                image_url = image_pattern.findall(image_url)
+                self._article_image = download_image(self._article_title, image_url[0])
+                break
+            break
+
     @property
     def article_title(self):
+        if not self._article_title:
+            self.scrape_title()
+
         return self._article_title
 
     @property
     def article_text(self):
+        if not self._article_text:
+            self.scrape_text()
+
         return self._article_text
 
     @property
     def article_image(self):
+        if not self._article_image:
+            self.scrape_image()
+
         return self._article_image
