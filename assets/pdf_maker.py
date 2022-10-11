@@ -39,7 +39,7 @@ def make_pdf(article_title: str, article_text: str, article_image: str | None) -
     article_title = article_title.replace(" ", "")
 
     # save the pdf as article_title.pdf
-    file = f"/Users/riobeggs/Documents/code/nzherald_webscraper/assets/articles/{article_title}.pdf"
+    file = f"./assets/articles/{article_title}.pdf"
     pdf.output(file)
 
     # returns the file name as a string
