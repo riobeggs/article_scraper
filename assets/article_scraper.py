@@ -1,5 +1,6 @@
 from assets.image_downloader import download_image
 from bs4 import BeautifulSoup
+import random
 import wget
 import re
 
@@ -14,10 +15,14 @@ class Article:
     def __init__(self):
 
         url = input("Enter URL: ")
-        file = wget.download(url, "./assets/html/article.html")
-        file = open("./assets/html/article.html")
 
-        self._html = BeautifulSoup(file, "lxml")
+        number = random.randrange(1000000)
+        number = str(number)
+
+        file = wget.download(url, f"./assets/html/article{number}.html")
+        file = open(f"./assets/html/article{number}.html")
+
+        self._html = BeautifulSoup(file, "html.parser")
         self._article_text = None
         self._article_title = None
         self._text_list = []
@@ -67,8 +72,10 @@ class Article:
             for image_url in header_images:
                 if "1440x" not in image_url:
                     continue
+                
                 image_pattern = re.compile(r"^.*?\.jpg")
                 image_url = image_pattern.findall(image_url)
+                
                 self._article_image = download_image(self._article_title, image_url[0])
                 break
             break
