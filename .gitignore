@@ -1,9 +1,9 @@
 __pycache__/
 __init__.py
 .venv/
-.DS_Store/
 .DS_Store
-assets/fonts/times new roman.ttf
+/fonts/
 articles/
 fonts/
 images/
+html/
