@@ -27,8 +27,6 @@ class Article:
     def scrape_title(self):
         """
         Scrapes given url for article title.
-
-        Returns article title as a string.
         """
         find_heading = self._html.find(class_="article__heading")
         for heading in find_heading:
@@ -39,8 +37,6 @@ class Article:
     def scrape_text(self):
         """
         Scrapes given url for article title.
-
-        Returns article title as a string.
         """
         subscription_text = "$1.99per week Share this article Reminder, this is a Premium article and requires a subscription to read."
         find_article = self._html.find_all(class_="article__body")
@@ -54,6 +50,9 @@ class Article:
         self._article_text = self._article_text.replace(subscription_text, "").strip()
 
     def scrape_image(self):
+        """
+        Scrapes given url for article header image.
+        """
         all_img_tags = self._html.find_all("img")
         img_tags = str(all_img_tags)
         images = img_tags.split(",")
