@@ -2,6 +2,9 @@ import re
 import os
 from fpdf import FPDF
 
+TNR = "Times New Roman"
+TNRB = "Times New Roman Bold"
+
 
 def make_pdf(article_title: str, article_text: str, article_image: str | None) -> str:
     """
@@ -9,9 +12,6 @@ def make_pdf(article_title: str, article_text: str, article_image: str | None) -
 
     Returns the file name as a string
     """
-
-    TNR = "Times New Roman"
-    TNRB = "Times New Roman Bold"
 
     pdf = FPDF()
     pdf.add_font(TNR, "", "./assets/fonts/times new roman.ttf", uni=True)
@@ -47,7 +47,7 @@ def make_pdf(article_title: str, article_text: str, article_image: str | None) -
         os.mkdir("./assets/articles/")
     except:
         pass
-    
+
     file = f"./assets/articles/{article_title}.pdf"
     pdf.output(file)
 
