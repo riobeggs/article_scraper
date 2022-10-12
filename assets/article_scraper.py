@@ -1,7 +1,6 @@
 from assets.image_downloader import download_image
 from bs4 import BeautifulSoup
-import random
-import wget
+from selenium import webdriver
 import re
 
 
@@ -16,13 +15,10 @@ class Article:
 
         url = input("Enter URL: ")
 
-        number = random.randrange(1000000)
-        number = str(number)
+        driver = webdriver.Safari()
+        driver.get(url)
 
-        file = wget.download(url, f"./assets/html/article{number}.html")
-        file = open(f"./assets/html/article{number}.html")
-
-        self._html = BeautifulSoup(file, "html.parser")
+        self._html = BeautifulSoup(driver.page_source, "lxml")
         self._article_text = None
         self._article_title = None
         self._text_list = []
@@ -60,24 +56,18 @@ class Article:
         return self._article_text
 
     def scrape_image(self) -> str | None:
-        images = self._html.find_all("img")
-
+        all_img_tags = self._html.find_all("img")
+        img_tags = str(all_img_tags)
+        images = img_tags.split(",")
         for image in images:
-            image = str(image)
-            if "1440" not in image:
+            if "1440x810" not in image:
                 continue
 
-            header_images = image.split(",")
+            pattern = re.compile(r"^.*?\.jpg")
+            image_url = pattern.findall(image)
 
-            for image_url in header_images:
-                if "1440x" not in image_url:
-                    continue
-                
-                image_pattern = re.compile(r"^.*?\.jpg")
-                image_url = image_pattern.findall(image_url)
-                
-                self._article_image = download_image(self._article_title, image_url[0])
-                break
+            self._article_image = download_image(self._article_title, image_url[0])
+
             break
 
     @property
