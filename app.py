@@ -6,9 +6,6 @@ from assets.open_article import read_article
 def main():
     # TODO Refactor all code
     ar = Article()
-    ar.scrape_title()
-    ar.scrape_text()
-    ar.scrape_image()
     article_pdf = make_pdf(ar.article_title, ar.article_text, ar.article_image)
     read_article(article_pdf)
 
