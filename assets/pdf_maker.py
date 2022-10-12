@@ -1,4 +1,5 @@
 import re
+import os
 from fpdf import FPDF
 
 
@@ -9,14 +10,17 @@ def make_pdf(article_title: str, article_text: str, article_image: str | None) -
     Returns the file name as a string
     """
 
+    TNR = "Times New Roman"
+    TNRB = "Times New Roman Bold"
+
     pdf = FPDF()
-    pdf.add_font("TNR", "", r"assets/fonts/times new roman.ttf")
-    pdf.add_font("TNRB", "", f"assets/fonts/times new roman bold.ttf")
+    pdf.add_font(TNR, "", "./assets/fonts/times new roman.ttf", uni=True)
+    pdf.add_font(TNRB, "", "./assets/fonts/times new roman bold.ttf", uni=True)
     pdf.set_margins(30, 23, 30)
     pdf.add_page()
 
     # create title
-    pdf.set_font("TNRB", size=28)
+    pdf.set_font(TNRB, size=28)
     pdf.multi_cell(150, 12, txt=article_title, align="L")
 
     if isinstance(article_image, str):
@@ -31,7 +35,7 @@ def make_pdf(article_title: str, article_text: str, article_image: str | None) -
 
     # create text
     # TODO change to aa font that supports macrons
-    pdf.set_font("TNR", size=12)
+    pdf.set_font(TNR, size=12)
     pdf.set_y(pdf.get_y())
     pdf.multi_cell(150, 8, txt=article_text, align="L")
 
@@ -39,6 +43,11 @@ def make_pdf(article_title: str, article_text: str, article_image: str | None) -
     article_title = article_title.replace(" ", "")
 
     # save the pdf as article_title.pdf
+    try:
+        os.mkdir("./assets/articles/")
+    except:
+        pass
+    
     file = f"./assets/articles/{article_title}.pdf"
     pdf.output(file)
 
