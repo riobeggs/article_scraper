@@ -1,7 +1,8 @@
-from assets.image_downloader import download_image
 from bs4 import BeautifulSoup
 from selenium import webdriver
 import re
+import os
+import urllib.request
 
 
 class Article:
@@ -63,9 +64,23 @@ class Article:
             pattern = re.compile(r"^.*?\.jpg")
             image_url = pattern.findall(image)
 
-            self._article_image = download_image(self._article_title, image_url[0])
+            self._article_image = self.download_image(image_url[0])
 
             break
+
+    def download_image(self, url) -> str:
+        if isinstance(url, str):
+            self._article_title = re.sub(r"[^a-zA-Z0-9]", "", self._article_title)
+
+            try:
+                os.mkdir("./assets/images/")
+            except:
+                pass
+            
+            image_file_path = f"./assets/images/{self._article_title}.jpg"
+            urllib.request.urlretrieve(url, image_file_path)
+
+            return image_file_path
 
     @property
     def article_title(self):
