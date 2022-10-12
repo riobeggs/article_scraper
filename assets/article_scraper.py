@@ -24,7 +24,7 @@ class Article:
         self._text_list = []
         self._article_image = None
 
-    def scrape_title(self) -> str:
+    def scrape_title(self):
         """
         Scrapes given url for article title.
 
@@ -35,9 +35,8 @@ class Article:
             heading = str(heading)
             self._article_title = re.sub(re.compile("<.*?>"), "", heading)
             self._article_title = self._article_title.capitalize()
-        return self._article_title
 
-    def scrape_text(self) -> str:
+    def scrape_text(self):
         """
         Scrapes given url for article title.
 
@@ -53,9 +52,8 @@ class Article:
             self._text_list.append(text)
         self._article_text = " ".join(self._text_list)
         self._article_text = self._article_text.replace(subscription_text, "").strip()
-        return self._article_text
 
-    def scrape_image(self) -> str | None:
+    def scrape_image(self):
         all_img_tags = self._html.find_all("img")
         img_tags = str(all_img_tags)
         images = img_tags.split(",")
