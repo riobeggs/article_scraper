@@ -2,23 +2,25 @@
 <html>
 
 <head>
-<style>
 
-    body{background-color:rgb(191, 176, 230);font-family:Verdana;text-align:center;}
-    
-</style>
+    <link rel="stylesheet" type="text/css" href= "{{ url_for('static',filename='styles/home.css') }}">
+
 </head>
 
 <body>
 
-    <form action="/", method="POST">
-        Article URL: <label for="url"></label><br>
-        <input type="text" name="url"><br>
 
-        <input type="submit" value="Decode">
-      </form> 
+    <form action="/" method="POST" class="search-bar">
 
-    <br>
+        <input type="text" name="url" placeholder="www.yourarticle.com" pattern=".*\S.*" required>
+
+            <button class="search-btn" type="submit">
+
+                <span>Search</span>
+
+            </button>
+    </form>
+
 
 </body>
 </html>
