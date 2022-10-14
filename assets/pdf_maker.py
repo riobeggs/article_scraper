@@ -48,8 +48,8 @@ def make_pdf(article_title: str, article_text: str, article_image: str | None) -
     except:
         pass
 
-    file = f"./assets/articles/{article_title}.pdf"
-    pdf.output(file)
+    path = f"./assets/articles/{article_title}.pdf"
+    pdf.output(path)
 
     # returns the file name as a string
-    return file
+    return f"{article_title}.pdf"
