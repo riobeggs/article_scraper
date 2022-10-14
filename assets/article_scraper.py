@@ -12,9 +12,7 @@ class Article:
     _text_list = None
     _article_image = None
 
-    def __init__(self):
-
-        url = input("Enter URL: ")
+    def __init__(self, url: str):
 
         driver = webdriver.Safari()
         driver.get(url)
@@ -76,7 +74,7 @@ class Article:
                 os.mkdir("./assets/images/")
             except:
                 pass
-            
+
             image_file_path = f"./assets/images/{self._article_title}.jpg"
             urllib.request.urlretrieve(url, image_file_path)
 
