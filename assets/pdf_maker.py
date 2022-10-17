@@ -7,7 +7,9 @@ TNR = "Times New Roman"
 TNRB = "Times New Roman Bold"
 
 
-def make_pdf(file_path: str, article_title: str, article_text: str, article_image: str | None) -> str:
+def make_pdf(
+    file_path: str, article_title: str, article_text: str, article_image: str | None
+) -> str:
     """
     Creates a pdf file containing the chosen article.
 
