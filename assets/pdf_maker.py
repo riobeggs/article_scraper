@@ -7,7 +7,7 @@ TNR = "Times New Roman"
 TNRB = "Times New Roman Bold"
 
 
-def make_pdf(article_title: str, article_text: str, article_image: str | None) -> str:
+def make_pdf(file_path: str, article_title: str, article_text: str, article_image: str | None) -> str:
     """
     Creates a pdf file containing the chosen article.
 
@@ -43,13 +43,7 @@ def make_pdf(article_title: str, article_text: str, article_image: str | None) -
     article_title = re.sub(r"[^a-zA-Z0-9]", "", article_title)
     article_title = article_title.replace(" ", "")
 
-    # save the pdf as article_title.pdf
-    try:
-        os.mkdir("./assets/articles/")
-    except:
-        pass
-
-    path = f"./assets/articles/{article_title}.pdf"
+    path = f"{file_path}/{article_title}.pdf"
     pdf.output(path)
 
     # returns the file name as a string

@@ -1,5 +1,6 @@
 import os
 import re
+import tempfile
 import urllib.request
 
 from bs4 import BeautifulSoup
@@ -12,6 +13,7 @@ class Article:
     _article_title = None
     _text_list = None
     _article_image = None
+    _tmpdir = None
 
     def __init__(self, url: str):
 
@@ -23,6 +25,13 @@ class Article:
         self._article_title = None
         self._text_list = []
         self._article_image = None
+        self._tmpdir = None
+
+    def make_tmpdir(self):
+        cwd = os.path.abspath(os.getcwd())
+        tmpdirpath = cwd + "/assets"
+
+        self._tmpdir =  tempfile.TemporaryDirectory(dir=tmpdirpath)
 
     def scrape_title(self):
         """
@@ -71,15 +80,17 @@ class Article:
         if isinstance(url, str):
             self._article_title = re.sub(r"[^a-zA-Z0-9]", "", self._article_title)
 
-            try:
-                os.mkdir("./assets/images/")
-            except:
-                pass
-
-            image_file_path = f"./assets/images/{self._article_title}.jpg"
+            image_file_path = f"{self._tmpdir.name}/{self._article_title}.jpg"
             urllib.request.urlretrieve(url, image_file_path)
 
             return image_file_path
+
+    @property
+    def tmpdir(self):
+        if not self._tmpdir:
+            self.make_tmpdir()
+        
+        return self._tmpdir
 
     @property
     def article_title(self):

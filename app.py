@@ -17,11 +17,9 @@ def home():
         url = request.form["url"]
 
         ar = Article(url)
-        article_name = make_pdf(ar.article_title, ar.article_text, ar.article_image)
-
-        workingdir = os.path.abspath(os.getcwd())
-        filepath = workingdir + "/assets/articles"
-        return send_from_directory(filepath, article_name)
+        article_name = make_pdf(ar.tmpdir.name, ar.article_title, ar.article_text, ar.article_image)
+        
+        return send_from_directory(ar.tmpdir.name, article_name)
 
 
 if __name__ == "__main__":
