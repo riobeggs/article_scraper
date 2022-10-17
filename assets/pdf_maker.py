@@ -1,5 +1,6 @@
-import re
 import os
+import re
+
 from fpdf import FPDF
 
 TNR = "Times New Roman"

@@ -1,8 +1,9 @@
+import os
+import re
+import urllib.request
+
 from bs4 import BeautifulSoup
 from selenium import webdriver
-import re
-import os
-import urllib.request
 
 
 class Article:

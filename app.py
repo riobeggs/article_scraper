@@ -1,8 +1,9 @@
-from assets.article_scraper import Article
-from assets.pdf_maker import make_pdf
 import os
+
 from flask import Flask, render_template, request, send_from_directory
 
+from assets.article_scraper import Article
+from assets.pdf_maker import make_pdf
 
 app = Flask(__name__)
 
@@ -19,9 +20,9 @@ def home():
         article_name = make_pdf(ar.article_title, ar.article_text, ar.article_image)
 
         workingdir = os.path.abspath(os.getcwd())
-        filepath = workingdir + '/assets/articles'
+        filepath = workingdir + "/assets/articles"
         return send_from_directory(filepath, article_name)
 
 
 if __name__ == "__main__":
-    app.run('0.0.0.0', debug=True, port=8100, ssl_context='adhoc')
+    app.run("0.0.0.0", debug=True, port=8100, ssl_context="adhoc")
