@@ -31,7 +31,7 @@ class Article:
         cwd = os.path.abspath(os.getcwd())
         tmpdirpath = cwd + "/assets"
 
-        self._tmpdir =  tempfile.TemporaryDirectory(dir=tmpdirpath)
+        self._tmpdir = tempfile.TemporaryDirectory(dir=tmpdirpath)
 
     def scrape_title(self):
         """
@@ -89,7 +89,7 @@ class Article:
     def tmpdir(self):
         if not self._tmpdir:
             self.make_tmpdir()
-        
+
         return self._tmpdir
 
     @property
