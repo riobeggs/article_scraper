@@ -37,44 +37,53 @@ class Article:
         """
         Scrapes given url for article title.
         """
-        find_heading = self._html.find(class_="article__heading")
-        for heading in find_heading:
-            heading = str(heading)
-            self._article_title = re.sub(re.compile("<.*?>"), "", heading)
-            self._article_title = self._article_title.capitalize()
+        try:
+            find_heading = self._html.find(class_="article__heading")
+            for heading in find_heading:
+                heading = str(heading)
+                self._article_title = re.sub(re.compile("<.*?>"), "", heading)
+                self._article_title = self._article_title.capitalize()
+        except:
+            pass
 
     def scrape_text(self):
         """
         Scrapes given url for article title.
         """
         subscription_text = "$1.99per week Share this article Reminder, this is a Premium article and requires a subscription to read."
-        find_article = self._html.find_all(class_="article__body")
-        content = find_article[0].find_all("p")
-        for line in content:
-            line = str(line)
-            text = re.sub(re.compile("<.*?>"), "", line)
-            text = text.replace("\n", " ")
-            self._text_list.append(text)
-        self._article_text = " ".join(self._text_list)
-        self._article_text = self._article_text.replace(subscription_text, "").strip()
+        try:
+            find_article = self._html.find_all(class_="article__body")
+            content = find_article[0].find_all("p")
+            for line in content:
+                line = str(line)
+                text = re.sub(re.compile("<.*?>"), "", line)
+                text = text.replace("\n", " ")
+                self._text_list.append(text)
+            self._article_text = " ".join(self._text_list)
+            self._article_text = self._article_text.replace(subscription_text, "").strip()
+        except: 
+            pass
 
     def scrape_image(self):
         """
         Scrapes given url for article header image.
         """
-        all_img_tags = self._html.find_all("img")
-        img_tags = str(all_img_tags)
-        images = img_tags.split(",")
-        for image in images:
-            if "1440x810" not in image:
-                continue
+        try:
+            all_img_tags = self._html.find_all("img")
+            img_tags = str(all_img_tags)
+            images = img_tags.split(",")
+            for image in images:
+                if "1440x810" not in image:
+                    continue
 
-            pattern = re.compile(r"^.*?\.jpg")
-            image_url = pattern.findall(image)
+                pattern = re.compile(r"^.*?\.jpg")
+                image_url = pattern.findall(image)
 
-            self._article_image = self.download_image(image_url[0])
+                self._article_image = self.download_image(image_url[0])
 
-            break
+                break
+        except:
+            pass
 
     def download_image(self, url) -> str:
         if isinstance(url, str):

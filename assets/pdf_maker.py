@@ -23,8 +23,9 @@ def make_pdf(
     pdf.add_page()
 
     # create title
-    pdf.set_font(TNRB, size=28)
-    pdf.multi_cell(150, 12, txt=article_title, align="L")
+    if isinstance(article_title, str):
+        pdf.set_font(TNRB, size=28)
+        pdf.multi_cell(150, 12, txt=article_title, align="L")
 
     if isinstance(article_image, str):
         # insert image
@@ -34,13 +35,18 @@ def make_pdf(
         pdf.cell(150, 5, ln=2)
     else:
         # insert line break
+        pdf.set_font(TNRB, size=28)
         pdf.cell(150, 7, ln=2)
 
     # create text
     # TODO change to aa font that supports macrons
-    pdf.set_font(TNR, size=12)
-    pdf.set_y(pdf.get_y())
-    pdf.multi_cell(150, 8, txt=article_text, align="L")
+    if isinstance(article_text, str):
+        pdf.set_font(TNR, size=12)
+        pdf.set_y(pdf.get_y())
+        pdf.multi_cell(150, 8, txt=article_text, align="L")
+
+    if article_title == None:
+        article_title = "article"
 
     article_title = re.sub(r"[^a-zA-Z0-9]", "", article_title)
     article_title = article_title.replace(" ", "")
