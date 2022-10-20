@@ -1,7 +1,6 @@
 __pycache__/
 .venv/
 .DS_Store
-/fonts/
 articles/
 fonts/
 images/
