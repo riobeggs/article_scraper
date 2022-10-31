@@ -1,10 +1,13 @@
 import logging
 import os
+import sys
 import unittest
 from unittest.mock import MagicMock, mock_open
 
-from assets.article_scraper import Article
 from bs4 import BeautifulSoup
+
+sys.path.append(os.path.abspath("."))
+from assets.article_scraper import Article
 
 logging.basicConfig(level=logging.DEBUG)
 
