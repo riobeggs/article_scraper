@@ -11,10 +11,11 @@ from selenium import webdriver
 class Article:
     def __init__(self, url: str):
 
-        driver = webdriver.Safari()
-        driver.get(url)
 
-        self._html = BeautifulSoup(driver.page_source, "lxml")
+        with webdriver.Safari() as driver:
+            driver.get(url)
+
+            self._html = BeautifulSoup(driver.page_source, "lxml")
         self._article_text = None
         self._article_title = None
         self._text_list = []
