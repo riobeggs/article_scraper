@@ -11,14 +11,15 @@ class ArticleScraper(unittest.TestCase):
     def setUp(self) -> None:
         self.logger = logging.getLogger(__name__)
         self.logger.setLevel(logging.INFO)
-
         consoleHandler = logging.StreamHandler()
         consoleHandler.setLevel(logging.INFO)
         self.logger.addHandler(consoleHandler)
 
         self.logger.debug(f"Setting Up - {self._testMethodName}")
+
         self._exampleURL = "https://tinyurl.com/mms6y95d"
         self.scraper = Article(url=self._exampleURL)
+        
         return super().setUp()
 
     def tearDown(self) -> None:
@@ -45,10 +46,10 @@ class ArticleScraper(unittest.TestCase):
         with self.assertRaises(InvalidArgumentException) as error_context:
             _ = Article("invalid_url")
 
-            actual_error_msg = str(error_context.exception)
-            expected_error_msg = "Could not parse requested URL 'invalid_url'"
+        actual_error_msg = str(error_context.exception)
+        expected_error_msg = "Message: Could not parse requested URL 'invalid_url'\n"
 
-            self.assertEqual(actual_error_msg, expected_error_msg)
+        self.assertEqual(actual_error_msg, expected_error_msg)
 
 
 if __name__ == "__main__":
