@@ -1,26 +1,28 @@
 import logging
-import os
-import sys
 import unittest
 
 from bs4 import BeautifulSoup
 from selenium.common.exceptions import InvalidArgumentException
 
-sys.path.append(os.path.abspath("."))
 from assets.article_scraper import Article
-
-logging.basicConfig(level=logging.DEBUG)
 
 
 class ArticleScraper(unittest.TestCase):
     def setUp(self) -> None:
-        logging.debug(f"Setting Up - {self._testMethodName}")
+        self.logger = logging.getLogger(__name__)
+        self.logger.setLevel(logging.INFO)
+
+        consoleHandler = logging.StreamHandler()
+        consoleHandler.setLevel(logging.INFO)
+        self.logger.addHandler(consoleHandler)
+
+        self.logger.debug(f"Setting Up - {self._testMethodName}")
         self._exampleURL = "https://tinyurl.com/mms6y95d"
         self.scraper = Article(url=self._exampleURL)
         return super().setUp()
 
     def tearDown(self) -> None:
-        logging.debug("Tearing Down")
+        self.logger.debug("Tearing Down")
         return super().tearDown()
 
     def test_init_loads_url(self):
@@ -40,9 +42,8 @@ class ArticleScraper(unittest.TestCase):
         """
         Tests that an invalid url passed in throws an error.
         """
-        # TODO: Does not work for some reason
         with self.assertRaises(InvalidArgumentException) as error_context:
-            self.scraper = Article("invalid_url")
+            _ = Article("invalid_url")
 
             actual_error_msg = str(error_context.exception)
             expected_error_msg = "Could not parse requested URL 'invalid_url'"
