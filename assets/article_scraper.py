@@ -11,16 +11,15 @@ from selenium import webdriver
 class Article:
     def __init__(self, url: str):
 
-
         with webdriver.Safari() as driver:
             driver.get(url)
 
             self._html = BeautifulSoup(driver.page_source, "lxml")
-        self._article_text = None
         self._article_title = None
-        self._text_list = []
+        self._article_text = None
         self._article_image = None
         self._cwd = None
+        self._image_url = None
         self._tmpdir = None
         self._pdf_name = None
 
@@ -29,7 +28,6 @@ class Article:
         Sets up temporary directory
         """
         self._cwd = os.path.dirname(__file__)
-
         self._tmpdir = tempfile.TemporaryDirectory(dir=self._cwd)
 
     def _scrape_title(self):
@@ -38,10 +36,10 @@ class Article:
         """
         try:
             find_heading = self._html.find(class_="article__heading")
+
             for heading in find_heading:
-                heading = str(heading)
                 self._article_title = re.sub(re.compile(r"<.*?>"), "", heading)
-                self._article_title = self._article_title.capitalize()
+
         except:
             pass
 
@@ -50,22 +48,27 @@ class Article:
         Scrapes given url for article title.
         """
         subscription_text = "$1.99per week Share this article Reminder, this is a Premium article and requires a subscription to read."
+        text_list = []
+
         try:
             find_article = self._html.find_all(class_="article__body")
             content = find_article[0].find_all("p")
+
             for line in content:
                 line = str(line)
                 text = re.sub(re.compile("<.*?>"), "", line)
                 text = text.replace("\n", " ")
-                self._text_list.append(text)
-            self._article_text = " ".join(self._text_list)
+                text_list.append(text)
+
+            self._article_text = " ".join(text_list)
             self._article_text = self._article_text.replace(
                 subscription_text, ""
             ).strip()
+
         except:
             pass
 
-    def _scrape_image(self):
+    def _scrape_image_url(self):
         """
         Scrapes given url for article header image.
         """
@@ -73,32 +76,36 @@ class Article:
             all_img_tags = self._html.find_all("img")
             img_tags = str(all_img_tags)
             images = img_tags.split(",")
+
             for image in images:
+
                 if "1440x810" not in image:
+
                     continue
 
                 pattern = re.compile(r"^.*?\.jpg")
                 image_url = pattern.findall(image)
-
-                self._article_image = self._download_image(image_url[0])
+                self._image_url = image_url[0]
+                self._download_image()
 
                 break
+
         except:
             pass
 
-    def _download_image(self, url) -> str:
+    def _download_image(self) -> str:
         """
         Downloads article header image to tmpdir.
         """
         assert isinstance(
-            url, str
-        ), f"url is the wrong type, expected string but got {type(url)}"
-        self._article_title = re.sub(r"[^a-zA-Z0-9]", "", self._article_title)
+            self._image_url, str
+        ), f"url is the wrong type, expected string but got {type(self._image_url)}"
+        article_title = re.sub(r"[^a-zA-Z0-9]", "", self._article_title)
 
-        image_file_path = f"{self._tmpdir.name}/{self._article_title}.jpg"
-        urllib.request.urlretrieve(url, image_file_path)
+        image_file_path = f"{self._tmpdir.name}/{article_title}.jpg"
+        urllib.request.urlretrieve(self._image_url, image_file_path)
 
-        return image_file_path
+        self._article_image = image_file_path
 
     def _make_pdf(self) -> str:
         """
@@ -140,13 +147,10 @@ class Article:
             pdf.set_y(pdf.get_y())
             pdf.multi_cell(150, 8, txt=self._article_text, align="L")
 
-        if self._article_title == None:
-            self._article_title = "article"
+        article_title = re.sub(r"[^a-zA-Z0-9]", "", self._article_title)
+        article_title = article_title.replace(" ", "")
 
-        self._article_title = re.sub(r"[^a-zA-Z0-9]", "", self._article_title)
-        self._article_title = self._article_title.replace(" ", "")
-
-        path = f"{self._tmpdir.name}/{self._article_title}.pdf"
+        path = f"{self._tmpdir.name}/{article_title}.pdf"
         pdf.output(path)
 
         # returns the file name as a string
@@ -159,7 +163,7 @@ class Article:
         self._make_tmpdir()
         self._scrape_title()
         self._scrape_text()
-        self._scrape_image()
+        self._scrape_image_url()
         self._make_pdf()
 
     @property
@@ -167,5 +171,22 @@ class Article:
         return self._tmpdir
 
     @property
+    def title(self):
+        return self._article_title
+
+    @property
+    def text(self):
+        return self._article_text
+
+    @property
+    def image(self):
+        return self._article_image
+
+    @property
     def pdf_name(self):
         return self._pdf_name
+
+# Testing
+# scraper = Article("https://tinyurl.com/mms6y95d")
+# scraper.run()
+# scraper.tmpdir.cleanup()
