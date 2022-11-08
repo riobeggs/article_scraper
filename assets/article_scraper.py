@@ -3,31 +3,44 @@ import re
 import tempfile
 import urllib.request
 
+import requests
 from bs4 import BeautifulSoup
 from fpdf import FPDF
-from selenium import webdriver
 
 
 class Article:
     def __init__(self, url: str):
+        self._url = url
+        self._cwd = os.path.dirname(__file__)
 
-        with webdriver.Safari() as driver:
-            driver.get(url)
-
-            self._html = BeautifulSoup(driver.page_source, "lxml")
+        self._html = None
+        self._html_parser = None
+        self._tmpdir = None
         self._article_title = None
         self._article_text = None
         self._article_image = None
-        self._cwd = None
         self._image_url = None
-        self._tmpdir = None
         self._pdf_name = None
+
+    def _get_html(self):
+        """
+        Makes a request to the url and retrieves the html as a str.
+        """
+        self._html = (requests.get(self._url).content).decode("utf-8")
+
+    def _parse_html(self):
+        """
+        Parses html into a Beautifulsoup object.
+        """
+        if self._html is None:
+            self._get_html()
+
+        self._html_parser = BeautifulSoup(self._html, "html.parser")
 
     def _make_tmpdir(self):
         """
-        Sets up temporary directory
+        Sets up temporary directory.
         """
-        self._cwd = os.path.dirname(__file__)
         self._tmpdir = tempfile.TemporaryDirectory(dir=self._cwd)
 
     def _scrape_title(self):
@@ -35,7 +48,7 @@ class Article:
         Scrapes given url for article title.
         """
         try:
-            find_heading = self._html.find(class_="article__heading")
+            find_heading = self._html_parser.find(class_="article__heading")
 
             for heading in find_heading:
                 self._article_title = re.sub(re.compile(r"<.*?>"), "", heading)
@@ -51,7 +64,7 @@ class Article:
         text_list = []
 
         try:
-            find_article = self._html.find_all(class_="article__body")
+            find_article = self._html_parser.find_all(class_="article__body")
             content = find_article[0].find_all("p")
 
             for line in content:
@@ -68,27 +81,23 @@ class Article:
         except:
             pass
 
-    def _scrape_image_url(self):
+    def _scrape_image(self):
         """
         Scrapes given url for article header image.
         """
         try:
-            all_img_tags = self._html.find_all("img")
-            img_tags = str(all_img_tags)
-            images = img_tags.split(",")
+            script = self._html_parser.find_all("script", type="application/javascript")
+            script = str(script)
+            data_list = script.split(",")
 
-            for image in images:
+            for image in data_list:
 
-                if "1440x810" not in image:
+                if "1440x810" in image:
+                    pattern = re.compile(r"^.*?\.jpg")
+                    url = pattern.findall(image)
 
-                    continue
-
-                pattern = re.compile(r"^.*?\.jpg")
-                image_url = pattern.findall(image)
-                self._image_url = image_url[0]
-                self._download_image()
-
-                break
+            self._image_url = url[0]
+            self._download_image()
 
         except:
             pass
@@ -110,8 +119,6 @@ class Article:
     def _make_pdf(self) -> str:
         """
         Creates a pdf file containing the chosen article.
-
-        Returns the file name as a string
         """
 
         pdf = FPDF()
@@ -160,10 +167,12 @@ class Article:
         """
         Runs methods required for gathering article content.
         """
-        # self._make_tmpdir()
+        self._get_html()
+        self._parse_html()
         self._scrape_title()
         self._scrape_text()
-        self._scrape_image_url()
+        self._make_tmpdir()
+        self._scrape_image()
         self._make_pdf()
 
     @property
@@ -185,8 +194,3 @@ class Article:
     @property
     def pdf_name(self):
         return self._pdf_name
-
-# Testing
-# scraper = Article("https://tinyurl.com/mms6y95d")
-# scraper.run()
-# scraper.tmpdir.cleanup()
