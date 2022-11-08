@@ -51,7 +51,7 @@ class ArticleScraper(unittest.TestCase):
 
         # Act
         with self.assertRaises(MissingSchema) as error_context:
-            self.scraper._url = "invalid_url"
+            self.scraper._url = "http://invalid_url"
             self.scraper._get_html()
 
         actual_error_msg = str(error_context.exception)
