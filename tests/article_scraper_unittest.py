@@ -30,8 +30,8 @@ class ArticleScraper(unittest.TestCase):
         """
         scraper = Article(self._exampleURL)
 
-        self.assertIsInstance(scraper._url, int)
-        self.assertIsInstance(scraper._cwd, int)
+        self.assertIsInstance(scraper._url, str)
+        self.assertIsInstance(scraper._cwd, str)
 
         self.assertIsNone(scraper._html)
         self.assertIsNone(scraper._html_parser)
