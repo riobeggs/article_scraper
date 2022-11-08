@@ -154,13 +154,13 @@ class Article:
         pdf.output(path)
 
         # returns the file name as a string
-        self._pdf_name = f"{self._article_title}.pdf"
+        self._pdf_name = f"{article_title}.pdf"
 
     def run(self):
         """
         Runs methods required for gathering article content.
         """
-        self._make_tmpdir()
+        # self._make_tmpdir()
         self._scrape_title()
         self._scrape_text()
         self._scrape_image_url()
