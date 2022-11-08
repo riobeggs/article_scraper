@@ -19,7 +19,7 @@ jobs:
       - name: Install dependencies
         run: |
           python3 -m pip install --upgrade pip
-          python3 -m pip install requirements.txt -r
+          python3 -m pip install -r requirements.txt 
       - name: Lint with black
         run: |
           python3 -m pip install black
