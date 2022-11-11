@@ -47,14 +47,15 @@ class Article:
         """
         Scrapes given url for article title.
         """
-        try:
-            find_heading = self._html_parser.find(class_="article__heading")
+        find_heading = self._html_parser.find(class_="article__heading")
 
-            for heading in find_heading:
-                self._article_title = re.sub(re.compile(r"<.*?>"), "", heading)
+        if find_heading is None:
+            find_heading = self._html_parser.find(
+                class_="article-bigread__heading__link"
+            )
 
-        except:
-            pass
+        for heading in find_heading:
+            self._article_title = heading
 
     def _scrape_text(self):
         """
@@ -63,53 +64,40 @@ class Article:
         subscription_text = "$1.99per week Share this article Reminder, this is a Premium article and requires a subscription to read."
         text_list = []
 
-        try:
-            find_article = self._html_parser.find_all(class_="article__body")
-            content = find_article[0].find_all("p")
+        find_article = self._html_parser.find_all(class_="article__body")
+        content = find_article[0].find_all("p")
 
-            for line in content:
-                line = str(line)
-                text = re.sub(re.compile("<.*?>"), "", line)
-                text = text.replace("\n", " ")
-                text_list.append(text)
+        for line in content:
+            line = str(line)
+            text = re.sub(re.compile("<.*?>"), "", line)
+            text = text.replace("\n", " ")
+            text_list.append(text)
 
-            self._article_text = " ".join(text_list)
-            self._article_text = self._article_text.replace(
-                subscription_text, ""
-            ).strip()
-
-        except:
-            pass
+        self._article_text = " ".join(text_list)
+        self._article_text = self._article_text.replace(subscription_text, "").strip()
 
     def _scrape_image(self):
         """
         Scrapes given url for article header image.
         """
-        try:
-            script = self._html_parser.find_all("script", type="application/javascript")
-            script = str(script)
-            data_list = script.split(",")
+        script = self._html_parser.find_all("script", type="application/javascript")
+        script = str(script)
+        data_list = script.split(",")
 
-            for image in data_list:
-
-                if "1440x810" in image:
-                    pattern = re.compile(r"^.*?\.jpg")
-                    pattern = re.compile(r"^.*?\.JPG")
+        for image in data_list:
+            if "1440x810" in image:
+                patterns = (re.compile(r"^.*?\.jpg"), re.compile(r"^.*?\.JPG"))
+                for pattern in patterns:
                     url = pattern.findall(image)
 
-            self._image_url = url[0]
-            self._download_image()
-
-        except:
-            pass
+                    if len(url) != 0:
+                        self._image_url = url[0]
+                        self._download_image()
 
     def _download_image(self) -> str:
         """
         Downloads article header image to tmpdir.
         """
-        assert isinstance(
-            self._image_url, str
-        ), f"url is the wrong type, expected string but got {type(self._image_url)}"
         article_title = re.sub(r"[^a-zA-Z0-9]", "", self._article_title)
 
         image_file_path = f"{self._tmpdir.name}/{article_title}.jpg"
@@ -149,7 +137,6 @@ class Article:
             pdf.cell(150, 7, ln=2)
 
         # create text
-        # TODO change to aa font that supports macrons
         if isinstance(self._article_text, str):
             pdf.set_font(tnr, size=12)
             pdf.set_y(pdf.get_y())
