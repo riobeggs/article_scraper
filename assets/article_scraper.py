@@ -94,6 +94,7 @@ class Article:
 
                 if "1440x810" in image:
                     pattern = re.compile(r"^.*?\.jpg")
+                    pattern = re.compile(r"^.*?\.JPG")
                     url = pattern.findall(image)
 
             self._image_url = url[0]
