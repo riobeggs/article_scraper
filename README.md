@@ -26,7 +26,11 @@ Run the Article Scraper
 python3 app.py
 ```
 1. Open a browser and visit the Article Scraper Flask web server at https://127.0.0.1:8100
+![1](readme_images/1.jpg?raw=true)
 2. Visit NZ Herald at https://www.nzherald.co.nz
 3. Select any article whether it is free or premium, and copy the URL.
+![2](readme_images/2.jpg?raw=true)
 4. Paste the URL into the Article Scraper web server.
+![3](readme_images/3.jpg?raw=true)
 5. A PDF of your article should automatically open in the browser.
+![4](readme_images/4.jpg?raw=true)
